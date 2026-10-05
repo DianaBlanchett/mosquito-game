@@ -1,0 +1,1633 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>蚊子咬人小游戏</title>
+
+
+<style>
+
+/* =========================
+   基础
+   ========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    overflow: hidden;
+
+    background: #dff3df;
+
+    font-family: Arial, sans-serif;
+
+    cursor: none;
+}
+
+
+/* =========================
+   游戏区域
+   ========================= */
+
+#game {
+
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+
+/* =========================
+   游戏开始画面
+   ========================= */
+
+#startScreen {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(20, 35, 25, 0.92);
+
+    color: white;
+
+    text-align: center;
+
+    cursor: default;
+}
+
+
+#startScreen h1 {
+
+    margin: 0 0 35px;
+
+    font-size: 56px;
+}
+
+
+/* 名字选择区域 */
+
+.nameOptions {
+
+    margin-bottom: 20px;
+
+    font-size: 20px;
+
+    text-align: left;
+}
+
+
+.nameOption {
+
+    margin: 12px 0;
+}
+
+
+.nameOption label {
+
+    cursor: pointer;
+}
+
+
+/* 名字输入框 */
+
+#nameInput {
+
+    width: 300px;
+
+    padding: 12px 15px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-size: 18px;
+
+    outline: none;
+}
+
+
+/* 开始按钮 */
+
+#startButton {
+
+    margin-top: 25px;
+
+    padding: 14px 40px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: white;
+
+    color: #333;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+#startButton:hover {
+
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   分数
+   ========================= */
+
+#score {
+
+    position: absolute;
+
+    top: 20px;
+    left: 20px;
+
+    z-index: 1000;
+
+    padding: 10px 18px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.9);
+
+    font-size: 24px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   人物
+   ========================= */
+
+#person {
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 360px;
+
+    transform:
+        translate(-50%, -50%);
+
+    user-select: none;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   人物名字
+   ========================= */
+
+#personName {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: -45px;
+
+    transform:
+        translateX(-50%);
+
+    padding: 5px 12px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255,255,255,0.9);
+
+    color: #222;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    display: none;
+
+}
+
+
+/* =========================
+   头
+   ========================= */
+
+#person .head {
+
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    left: 55px;
+    top: 0;
+
+    border-radius: 50%;
+
+    background: #f2c7a5;
+
+    border: 3px solid #333;
+
+    overflow: hidden;
+}
+
+
+/* 头发 */
+
+#person .head::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 76px;
+    height: 38px;
+
+    left: -6px;
+    top: -8px;
+
+    border-radius:
+        50% 50% 30% 30%;
+
+    background: #3a2618;
+}
+
+
+/* 眼睛 */
+
+#person .head::after {
+
+    content: "•  •";
+
+    position: absolute;
+
+    left: 18px;
+    top: 28px;
+
+    font-size: 15px;
+
+    color: #222;
+
+    letter-spacing: 8px;
+}
+
+
+/* =========================
+   身体
+   ========================= */
+
+#person .body {
+
+    position: absolute;
+
+    width: 100px;
+    height: 185px;
+
+    left: 40px;
+    top: 72px;
+
+    border-radius:
+        45px 45px 15px 15px;
+
+    background: #4f83cc;
+
+    border: 3px solid #333;
+}
+
+
+/* =========================
+   左手
+   ========================= */
+
+#person .arm.left {
+
+    position: absolute;
+
+    width: 30px;
+    height: 145px;
+
+    left: 15px;
+    top: 82px;
+
+    border-radius: 20px;
+
+    background: #f2c7a5;
+
+    border: 3px solid #333;
+
+    transform:
+        rotate(10deg);
+}
+
+
+/* =========================
+   右手
+   ========================= */
+
+#person .arm.right {
+
+    position: absolute;
+
+    width: 30px;
+    height: 145px;
+
+    left: 135px;
+    top: 82px;
+
+    border-radius: 20px;
+
+    background: #f2c7a5;
+
+    border: 3px solid #333;
+
+    transform:
+        rotate(-10deg);
+}
+
+
+/* =========================
+   左腿
+   ========================= */
+
+#person .leg.left {
+
+    position: absolute;
+
+    width: 35px;
+    height: 120px;
+
+    left: 48px;
+    top: 245px;
+
+    background: #333;
+
+    border-radius: 15px;
+}
+
+
+/* =========================
+   右腿
+   ========================= */
+
+#person .leg.right {
+
+    position: absolute;
+
+    width: 35px;
+    height: 120px;
+
+    left: 98px;
+    top: 245px;
+
+    background: #333;
+
+    border-radius: 15px;
+}
+
+
+/* =========================
+   血迹
+   ========================= */
+
+.blood {
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #d71920;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 50;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 0 4px
+        rgba(100,0,0,0.6);
+
+    animation:
+        bloodAppear
+        0.25s
+        ease-out;
+}
+
+
+@keyframes bloodAppear {
+
+    0% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(0);
+
+        opacity: 0;
+    }
+
+    70% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.3);
+
+        opacity: 1;
+    }
+
+    100% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+        opacity: 1;
+    }
+}
+
+
+/* =========================
+   蚊子
+   ========================= */
+
+#mosquito {
+
+    position: fixed;
+
+    width: 45px;
+    height: 45px;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 2000;
+
+    pointer-events: none;
+
+    font-size: 40px;
+
+    line-height: 45px;
+
+    text-align: center;
+
+    filter:
+        drop-shadow(
+            2px 2px 2px
+            rgba(0,0,0,0.3)
+        );
+
+    transition:
+        width 0.15s,
+        height 0.15s,
+        font-size 0.15s;
+}
+
+
+/* =========================
+   咬人动画
+   ========================= */
+
+.bite {
+
+    animation:
+        biteAnimation
+        0.25s
+        ease;
+}
+
+
+@keyframes biteAnimation {
+
+    0% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    50% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.5)
+            rotate(20deg);
+    }
+
+    100% {
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+
+/* =========================
+   游戏结束
+   ========================= */
+
+#gameOver {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    background:
+        rgba(0,0,0,0.65);
+
+    color: white;
+
+    text-align: center;
+
+    cursor: default;
+}
+
+
+#gameOver h1 {
+
+    margin: 0 0 15px;
+
+    font-size: 64px;
+}
+
+
+#finalScore {
+
+    font-size: 28px;
+
+    margin-bottom: 30px;
+}
+
+
+#restart {
+
+    padding: 14px 30px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: white;
+
+    color: #333;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   提示
+   ========================= */
+
+#message {
+
+    position: absolute;
+
+    bottom: 30px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,0.85);
+
+    font-size: 18px;
+
+    color: #333;
+
+    z-index: 1000;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     游戏开始画面
+     ========================= -->
+
+<div id="startScreen">
+
+    <h1>
+        🦟 蚊子咬人
+    </h1>
+
+
+    <div class="nameOptions">
+
+        <div class="nameOption">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="nameMode"
+                    value="none"
+                    checked
+                >
+
+                不显示名字
+
+            </label>
+
+        </div>
+
+
+        <div class="nameOption">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="nameMode"
+                    value="custom"
+                >
+
+                输入人名
+
+            </label>
+
+
+            <br>
+
+
+            <input
+                id="nameInput"
+                type="text"
+                placeholder="请输入人名"
+                maxlength="12"
+                disabled
+            >
+
+        </div>
+
+    </div>
+
+
+    <button id="startButton">
+
+        开始游戏
+
+    </button>
+
+</div>
+
+
+
+<!-- =========================
+     游戏
+     ========================= -->
+
+<div id="game">
+
+
+    <!-- 分数 -->
+
+    <div id="score">
+
+        🦟 得分：
+
+        <span id="scoreNumber">
+            0
+        </span>
+
+    </div>
+
+
+    <!-- 人物 -->
+
+    <div id="person">
+
+
+        <!-- 人物名字 -->
+
+        <div id="personName"></div>
+
+
+        <div class="head"></div>
+
+        <div class="body"></div>
+
+        <div class="arm left"></div>
+
+        <div class="arm right"></div>
+
+        <div class="leg left"></div>
+
+        <div class="leg right"></div>
+
+
+    </div>
+
+
+    <!-- 蚊子 -->
+
+    <div id="mosquito">
+        🦟
+    </div>
+
+
+    <!-- 提示 -->
+
+    <div id="message">
+
+        移动鼠标，让蚊子去咬人！
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================
+     游戏结束
+     ========================= -->
+
+<div id="gameOver">
+
+    <h1>
+        🦟 蚊子太大了装不下了！
+    </h1>
+
+
+    <div id="finalScore">
+
+        最终得分：0
+
+    </div>
+
+
+    <button id="restart">
+
+        🔄 再来一次
+
+    </button>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   获取元素
+   ========================= */
+
+const startScreen =
+    document.getElementById(
+        "startScreen"
+    );
+
+
+const startButton =
+    document.getElementById(
+        "startButton"
+    );
+
+
+const nameInput =
+    document.getElementById(
+        "nameInput"
+    );
+
+
+const personName =
+    document.getElementById(
+        "personName"
+    );
+
+
+const person =
+    document.getElementById(
+        "person"
+    );
+
+
+const mosquito =
+    document.getElementById(
+        "mosquito"
+    );
+
+
+const scoreNumber =
+    document.getElementById(
+        "scoreNumber"
+    );
+
+
+const gameOver =
+    document.getElementById(
+        "gameOver"
+    );
+
+
+const finalScore =
+    document.getElementById(
+        "finalScore"
+    );
+
+
+const restart =
+    document.getElementById(
+        "restart"
+    );
+
+
+/* =========================
+   游戏变量
+   ========================= */
+
+let score = 0;
+
+
+/*
+   蚊子初始大小
+*/
+
+let mosquitoSize = 45;
+
+
+/*
+   蚊子每次增加 3px
+*/
+
+const mosquitoGrowth = 3;
+
+
+let canBite = true;
+
+let gameFinished = false;
+
+
+/*
+   玩家名字
+*/
+
+let playerName = "";
+
+let showName = false;
+
+
+/* =========================
+   名字选项
+   ========================= */
+
+const nameRadios =
+    document.querySelectorAll(
+        'input[name="nameMode"]'
+    );
+
+
+nameRadios.forEach(
+
+    radio => {
+
+        radio.addEventListener(
+
+            "change",
+
+            function() {
+
+                if (
+                    this.value ===
+                    "custom"
+                ) {
+
+                    nameInput.disabled =
+                        false;
+
+                    nameInput.focus();
+
+                }
+
+                else {
+
+                    nameInput.disabled =
+                        true;
+
+                }
+
+            }
+
+        );
+
+    }
+
+);
+
+
+/* =========================
+   开始游戏
+   ========================= */
+
+startButton.addEventListener(
+
+    "click",
+
+    function() {
+
+        /*
+           判断用户选择了什么
+        */
+
+        const selected =
+            document.querySelector(
+                'input[name="nameMode"]:checked'
+            );
+
+
+        if (
+            selected.value ===
+            "custom"
+        ) {
+
+            playerName =
+                nameInput.value.trim();
+
+
+            /*
+               如果用户没有输入名字，
+               使用默认名字
+            */
+
+            if (
+                playerName === ""
+            ) {
+
+                playerName =
+                    "这个人";
+
+            }
+
+
+            showName = true;
+
+        }
+
+        else {
+
+            playerName = "";
+
+            showName = false;
+
+        }
+
+
+        /*
+           设置人物名字
+        */
+
+        personName.textContent =
+            playerName;
+
+
+        if (showName) {
+
+            personName.style.display =
+                "block";
+
+        }
+
+        else {
+
+            personName.style.display =
+                "none";
+
+        }
+
+
+        /*
+           隐藏开始画面
+        */
+
+        startScreen.style.display =
+            "none";
+
+
+        /*
+           开始游戏
+        */
+
+        resetGame();
+
+    }
+
+);
+
+
+/* =========================
+   随机放置人物
+   ========================= */
+
+function movePerson() {
+
+    const margin = 200;
+
+
+    const x =
+        margin +
+        Math.random() *
+        (
+            window.innerWidth -
+            margin * 2
+        );
+
+
+    const y =
+        margin +
+        Math.random() *
+        (
+            window.innerHeight -
+            margin * 2
+        );
+
+
+    person.style.left =
+        x + "px";
+
+
+    person.style.top =
+        y + "px";
+
+}
+
+
+/* =========================
+   鼠标移动
+   ========================= */
+
+document.addEventListener(
+
+    "mousemove",
+
+    function(event) {
+
+        if (gameFinished) {
+
+            return;
+
+        }
+
+
+        /*
+           游戏还没开始时，
+           蚊子也不移动
+        */
+
+        if (
+            startScreen.style.display
+            !== "none"
+        ) {
+
+            return;
+
+        }
+
+
+        mosquito.style.left =
+            event.clientX + "px";
+
+
+        mosquito.style.top =
+            event.clientY + "px";
+
+
+        checkCollision();
+
+    }
+
+);
+
+
+/* =========================
+   碰撞检测
+   ========================= */
+
+function checkCollision() {
+
+    if (
+        !canBite ||
+        gameFinished
+    ) {
+
+        return;
+
+    }
+
+
+    const mosquitoRect =
+        mosquito.getBoundingClientRect();
+
+
+    const personRect =
+        person.getBoundingClientRect();
+
+
+    const collision =
+
+        mosquitoRect.left <
+        personRect.right &&
+
+        mosquitoRect.right >
+        personRect.left &&
+
+        mosquitoRect.top <
+        personRect.bottom &&
+
+        mosquitoRect.bottom >
+        personRect.top;
+
+
+    if (collision) {
+
+        bite();
+
+    }
+
+}
+
+
+/* =========================
+   咬人
+   ========================= */
+
+function bite() {
+
+    canBite = false;
+
+
+    /*
+       得分
+    */
+
+    score++;
+
+    scoreNumber.textContent =
+        score;
+
+
+    /*
+       创建血迹
+    */
+
+    createBlood();
+
+
+    /*
+       蚊子变大
+    */
+
+    mosquitoSize +=
+        mosquitoGrowth;
+
+
+    mosquito.style.width =
+        mosquitoSize + "px";
+
+
+    mosquito.style.height =
+        mosquitoSize + "px";
+
+
+    mosquito.style.fontSize =
+        mosquitoSize * 0.9 + "px";
+
+
+    /*
+       咬人动画
+    */
+
+    mosquito.classList.remove(
+        "bite"
+    );
+
+
+    void mosquito.offsetWidth;
+
+
+    mosquito.classList.add(
+        "bite"
+    );
+
+
+    /*
+       检查蚊子是否已经
+       大到浏览器窗口
+    */
+
+    if (
+
+        mosquitoSize >=
+        window.innerWidth ||
+
+        mosquitoSize >=
+        window.innerHeight
+
+    ) {
+
+        setTimeout(
+            endGame,
+            300
+        );
+
+        return;
+
+    }
+
+
+    /*
+       人物移动
+    */
+
+    setTimeout(
+
+        function() {
+
+            if (!gameFinished) {
+
+                movePerson();
+
+                canBite = true;
+
+            }
+
+        },
+
+        250
+
+    );
+
+}
+
+
+/* =========================
+   创建血迹
+   ========================= */
+
+function createBlood() {
+
+    const personRect =
+        person.getBoundingClientRect();
+
+
+    const mosquitoRect =
+        mosquito.getBoundingClientRect();
+
+
+    /*
+       蚊子中心点
+    */
+
+    const mosquitoX =
+
+        mosquitoRect.left +
+        mosquitoRect.width / 2;
+
+
+    const mosquitoY =
+
+        mosquitoRect.top +
+        mosquitoRect.height / 2;
+
+
+    /*
+       相对于人物
+    */
+
+    let bloodX =
+        mosquitoX -
+        personRect.left;
+
+
+    let bloodY =
+        mosquitoY -
+        personRect.top;
+
+
+    /*
+       限制在人物范围内
+    */
+
+    const padding = 10;
+
+
+    bloodX = Math.max(
+
+        padding,
+
+        Math.min(
+
+            personRect.width -
+            padding,
+
+            bloodX
+
+        )
+
+    );
+
+
+    bloodY = Math.max(
+
+        padding,
+
+        Math.min(
+
+            personRect.height -
+            padding,
+
+            bloodY
+
+        )
+
+    );
+
+
+    /*
+       创建血迹
+    */
+
+    const blood =
+        document.createElement(
+            "div"
+        );
+
+
+    blood.classList.add(
+        "blood"
+    );
+
+
+    /*
+       随机大小
+    */
+
+    const bloodSize =
+        15 +
+        Math.random() * 15;
+
+
+    blood.style.width =
+        bloodSize + "px";
+
+
+    blood.style.height =
+        bloodSize + "px";
+
+
+    blood.style.left =
+        bloodX + "px";
+
+
+    blood.style.top =
+        bloodY + "px";
+
+
+    person.appendChild(
+        blood
+    );
+
+}
+
+
+/* =========================
+   游戏结束
+   ========================= */
+
+function endGame() {
+
+    gameFinished = true;
+
+    canBite = false;
+
+
+    finalScore.textContent =
+        "最终得分：" + score;
+
+
+    gameOver.style.display =
+        "flex";
+
+}
+
+
+/* =========================
+   重置游戏
+   ========================= */
+
+function resetGame() {
+
+    /*
+       删除旧血迹
+    */
+
+    document
+        .querySelectorAll(
+            ".blood"
+        )
+        .forEach(
+            blood =>
+                blood.remove()
+        );
+
+
+    /*
+       重置分数
+    */
+
+    score = 0;
+
+
+    scoreNumber.textContent =
+        "0";
+
+
+    /*
+       重置蚊子大小
+    */
+
+    mosquitoSize = 45;
+
+
+    mosquito.style.width =
+        "45px";
+
+
+    mosquito.style.height =
+        "45px";
+
+
+    mosquito.style.fontSize =
+        "40px";
+
+
+    /*
+       重置游戏状态
+    */
+
+    gameFinished = false;
+
+    canBite = true;
+
+
+    /*
+       隐藏结束画面
+    */
+
+    gameOver.style.display =
+        "none";
+
+
+    /*
+       人物随机出现
+    */
+
+    movePerson();
+
+
+    /*
+       蚊子回到中央
+    */
+
+    mosquito.style.left =
+        window.innerWidth / 2 +
+        "px";
+
+
+    mosquito.style.top =
+        window.innerHeight / 2 +
+        "px";
+
+}
+
+
+/* =========================
+   再来一次
+   ========================= */
+
+restart.addEventListener(
+
+    "click",
+
+    function() {
+
+        /*
+           回到开始画面，
+           让玩家可以重新选择
+           是否显示名字
+        */
+
+        gameOver.style.display =
+            "none";
+
+
+        startScreen.style.display =
+            "flex";
+
+
+        /*
+           保留之前的名字设置，
+           但玩家也可以重新修改
+        */
+
+    }
+
+);
+
+
+/* =========================
+   浏览器大小改变
+   ========================= */
+
+window.addEventListener(
+
+    "resize",
+
+    function() {
+
+        if (
+            !gameFinished &&
+            startScreen.style.display
+            === "none"
+        ) {
+
+            movePerson();
+
+        }
+
+    }
+
+);
+
+</script>
+
+
+</body>
+
+</html>
+```
