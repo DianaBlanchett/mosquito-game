@@ -6,7 +6,7 @@
 
 <br>
 
-游戏1：蚊子模拟器 （就是那个index.html）
+游戏1：蚊子模拟器 （就是那个index.html）或者点这个：https://dianablanchett.github.io/mosquito-game/
 
 人会随机出现在屏幕上的不同位置
 
